@@ -1,0 +1,33 @@
+<div class="wrapper">
+    <!-- HEADING -->
+    <h1>User Management</h1>
+    <!-- Form starts here -->
+    <form [formGroup]="userForm" (ngSubmit)="isEditing ? updateUser() : addNewUser()">
+        <label>
+            Name:<input formControlName="name" />
+        </label><br>
+        <label>
+            Email:<input formControlName="email" />
+        </label><br>
+        <label>
+            Role:<input formControlName="role" />
+        </label><br>
+        <button type="submit">{{ isEditing ? 'Update' : 'Add' }} User</button>
+    </form><hr>
+    <!-- Form ends here -->
+
+    <h1>Search for User</h1>
+    <input type="text" placeholder="Search user" (input)="onSearch($event)" />
+    <ul>
+        <h2>List Of Users</h2>
+        <li *ngFor="let user of currentUserList">
+            {{ user.name }} - {{ user.email }} - {{ user.role }}
+            <button (click)="editingUser(user)">Edit</button>
+            <button (click)="deleteUser(user.id)">Delete</button>
+        </li>
+    </ul>
+
+    <!-- <mat-paginator [length]="totalUserList?.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        (page)="onPageChange($event)">
+    </mat-paginator> -->
+</div>

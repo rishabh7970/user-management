@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "name": "Rishabh Sharma",
+      "email": "rishabh.sharma@prospecta.com",
+      "role": "Development Engineer",
+      "id": "1"
+    },
+    {
+      "name": "Shivanshu Saxena",
+      "email": "Shivanshu.saxena@prospecta.com",
+      "role": "Development Engineer",
+      "id": "2"
+    }
+  ]
+}
