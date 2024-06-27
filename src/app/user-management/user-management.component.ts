@@ -62,7 +62,10 @@ export class UserManagementComponent implements OnInit {
         this.isEditing = user;
         this.userForm.setValue({
             name: user.name,
+            last_name: user.last_name,
             email: user.email,
+            country: user.country,
+            company_name: user.company_name,
             role: user.role
         });
     }
