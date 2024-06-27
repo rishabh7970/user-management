@@ -1,0 +1,13 @@
+.light-blue-bg {
+    background-color: #cce5ff; /* light blue */
+  }
+
+  .dark-blue-bg {
+    background-color: #6c757d; /* dark blue */
+    color: white; /* white text color for better readability */
+  }
+
+  .form-label {
+    font-weight: bold;
+    /* font-family: 'Roboto', sans-serif; */
+  }

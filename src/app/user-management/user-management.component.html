@@ -1,31 +1,87 @@
 <div class="wrapper">
     <!-- HEADING -->
-    <h1>User Management</h1>
+    <h1 class="text-center">User Management</h1>
     <!-- Form starts here -->
     <form [formGroup]="userForm" (ngSubmit)="isEditing ? updateUser() : addNewUser()">
-        <label>
-            Name:<input formControlName="name" />
-        </label><br>
-        <label>
-            Email:<input formControlName="email" />
-        </label><br>
-        <label>
-            Role:<input formControlName="role" />
-        </label><br>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">First Name</label>
+              <input formControlName="name" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <input formControlName="email" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Organisation Name</label>
+              <input formControlName="company_name" type="text" class="form-control rounded-pill">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              <input formControlName="last_name" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Country</label>
+              <input formControlName="country" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Designation</label>
+              <input formControlName="role" type="text" class="form-control rounded-pill">
+            </div>
+          </div>
+        </div>
         <button type="submit">{{ isEditing ? 'Update' : 'Add' }} User</button>
-    </form><hr>
+      </form>
+            <hr>
+      
     <!-- Form ends here -->
 
-    <h1>Search for User</h1>
-    <input type="text" placeholder="Search user" (input)="onSearch($event)" />
-    <ul>
-        <h2>List Of Users</h2>
-        <li *ngFor="let user of currentUserList">
-            {{ user.name }} - {{ user.email }} - {{ user.role }}
-            <button (click)="editingUser(user)">Edit</button>
-            <button (click)="deleteUser(user.id)">Delete</button>
-        </li>
-    </ul>
+
+    <div class="container">
+        <div class="row">
+          <div class="col text-center">
+            <h2>List Of Users</h2>
+          </div>
+          <div class="col-auto ml-auto">
+            <input type="text" placeholder="Search user" (input)="onSearch($event)" class="form-control rounded-pill" style="width: 200px;"/>
+          </div>
+        </div>
+      </div><br>
+      
+    <table class="table">
+      <thead>
+        <tr>
+            <th scope="col" class="light-blue-bg">#</th>
+            <th scope="col" class="dark-blue-bg">First Name</th>
+            <th scope="col" class="light-blue-bg">Last Name</th>
+            <th scope="col" class="dark-blue-bg">Email</th>
+            <th scope="col" class="light-blue-bg">Country</th>
+            <th scope="col" class="dark-blue-bg">Organisation Name</th>
+            <th scope="col" class="light-blue-bg">Designation</th>
+            <th scope="col" class="dark-blue-bg">Edit</th>
+            <th scope="col" class="light-blue-bg">Delete</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of currentUserList; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td >{{ user.name }}</td>
+          <td >{{ user.last_name }}</td>
+          <td >{{ user.email }}</td>
+          <td >{{ user.country }}</td>
+          <td >{{ user.company_name }}</td>
+          <td >{{ user.role }}</td>
+          <td ><button (click)="editingUser(user)">Edit</button></td>
+            <td ><button (click)="deleteUser(user.id)">Delete</button></td>
+        </tr>
+      </tbody>
+    </table>
+    
+
 
     <!-- <mat-paginator [length]="totalUserList?.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
         (page)="onPageChange($event)">

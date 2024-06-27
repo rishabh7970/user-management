@@ -23,7 +23,10 @@ export class UserManagementComponent implements OnInit {
     constructor(private fb: FormBuilder, private userService: UserService) {
         this.userForm = this.fb.group({
             name: ['', Validators.required],
+            last_name: ['', Validators.required],
             email: ['', [Validators.required, Validators.email]],
+            country: ['', Validators.required],
+            company_name: ['', Validators.required],
             role: ['', Validators.required]
         });
     }
