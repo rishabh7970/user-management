@@ -1,18 +1,14 @@
-
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-// import { PageEvent } from '@angular/material/paginator';
 import { UserService } from '../user.service';
 
-
 @Component({
-    selector: 'app-user-management',
-    templateUrl: './user-management.component.html',
-    styleUrls: ['./user-management.component.css']
+  selector: 'app-create',
+  templateUrl: './create.component.html',
+  styleUrl: './create.component.css'
 })
-export class UserManagementComponent implements OnInit {
-
-    pageSize: number = 10;
+export class CreateComponent implements OnInit{
+  pageSize: number = 10;
     pageIndex: number = 0;
     currentUserList: any[] = [];
     totalUserList: any[] = [];
@@ -22,12 +18,12 @@ export class UserManagementComponent implements OnInit {
 
     constructor(private fb: FormBuilder, private userService: UserService) {
         this.userForm = this.fb.group({
-            name: ['', Validators.required],
-            last_name: ['', Validators.required],
+            name: ['', [Validators.required, Validators.minLength(3)]],
+            last_name: [''],
             email: ['', [Validators.required, Validators.email]],
-            country: ['', Validators.required],
-            company_name: ['', Validators.required],
-            role: ['', Validators.required]
+            country: [''],
+            company_name: [''],
+            role: ['']
         });
     }
     

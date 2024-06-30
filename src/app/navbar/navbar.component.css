@@ -1,0 +1,16 @@
+.click-effect {
+    transition: transform 0.1s ease;
+  }
+  
+  .click-effect:active {
+    transform: scale(0.95);
+  }
+  
+
+  .logo-image{
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-top: -6px;
+}

@@ -1,0 +1,43 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+.hero-section {
+    background-image: url('https://www.comarch.com/files-com/miniatures/file_612/user-access-management.736x464.0ffb2e78.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+    padding: 100px 0;
+}
+
+.hero-section .container {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+}
+
+.hero-section .btn {
+    margin-top: 20px;
+}
+
+.card {
+    border: none;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.card-text {
+    font-size: 1rem;
+}

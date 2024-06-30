@@ -1,0 +1,61 @@
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="text-center fw-bold mb-4">User Form</h3>
+
+          <!-- Form starts here -->
+          <form [formGroup]="userForm" (ngSubmit)="isEditing ? updateUser() : addNewUser()">
+
+            <div class="mb-3">
+              <label class="form-label">First Name</label>
+              <input formControlName="name" type="text" class="form-control rounded-pill">
+              <div *ngIf="userForm.controls['name'].errors" class="text-danger">
+                <div *ngIf="userForm.pristine && userForm.controls['name'].errors['required']" >
+                  Field Required
+                </div>
+                <div *ngIf="userForm.dirty && userForm.controls['name'].errors" >
+                  Please enter a name of minimum 3 letters
+                </div>
+                </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Last Name</label>
+              <input formControlName="last_name" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <input formControlName="email" type="text" class="form-control rounded-pill">
+              <div *ngIf="userForm.controls['email'].errors" class="text-danger">
+                <div *ngIf="userForm.pristine && userForm.controls['email'].errors['required']" >
+                  Field Required
+                </div>
+                <div *ngIf="userForm.dirty && userForm.controls['email'].errors" >
+                Please enter a valid email Address
+              </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Country</label>
+              <input formControlName="country" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Organisation Name</label>
+              <input formControlName="company_name" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Designation</label>
+              <input formControlName="role" type="text" class="form-control rounded-pill">
+            </div>
+            <div class="d-flex justify-content-center">
+              <button type="submit" class="btn btn-primary me-3 rounded-pill">{{ isEditing ? 'Update' : 'Add' }} User</button>
+              <button type="reset" class="btn btn-secondary rounded-pill" (click)="userForm.reset()">Reset</button>
+            </div>
+          </form>
+          <!-- Form ends here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
