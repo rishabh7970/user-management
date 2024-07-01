@@ -10,6 +10,8 @@ import { HomeComponent } from './home/home.component';
 import { CreateComponent } from './create/create.component';
 import { ViewComponent } from './view/view.component';
 
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,14 +19,15 @@ import { ViewComponent } from './view/view.component';
     NavbarComponent,
     HomeComponent,
     CreateComponent,
-    ViewComponent
+    ViewComponent,
+    
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
   ],
   providers: [
     provideClientHydration(),
