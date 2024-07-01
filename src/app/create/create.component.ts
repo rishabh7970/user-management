@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
+import { HttpClient } from '@angular/common/http';
+
+
 
 @Component({
   selector: 'app-create',
@@ -16,7 +19,7 @@ export class CreateComponent implements OnInit{
     isEditing: any = null;
     searchedText: string = '';
 
-    constructor(private fb: FormBuilder, private userService: UserService) {
+    constructor(private fb: FormBuilder, private userService: UserService, private http: HttpClient) {
         this.userForm = this.fb.group({
             name: ['', [Validators.required, Validators.minLength(3)]],
             last_name: [''],
@@ -50,21 +53,12 @@ export class CreateComponent implements OnInit{
                 this.totalUserList.push(user);
                 this.userForm.reset();
                 this.updatecurrentUserList();
+                
             });
         }
     }
 
-    editingUser(user: any) {
-        this.isEditing = user;
-        this.userForm.setValue({
-            name: user.name,
-            last_name: user.last_name,
-            email: user.email,
-            country: user.country,
-            company_name: user.company_name,
-            role: user.role
-        });
-    }
+    
 
     updateUser() {
         if (this.userForm.valid) {
@@ -78,21 +72,7 @@ export class CreateComponent implements OnInit{
         }
     }
 
-    deleteUser(userId: number) {
-        this.userService.deleteUser(userId).subscribe(() => {
-            this.totalUserList = this.totalUserList.filter(user => user.id !== userId);
-            this.updatecurrentUserList();
-        });
-    }
-
-    onSearch(event: any) {
-        this.searchedText = event.target.value;
-        this.updatecurrentUserList();
-    }
-
-    // onPageChange(event: PageEvent) {
-    //     this.pageSize = event.pageSize;
-    //     this.pageIndex = event.pageIndex;
-    //     this.updatecurrentUserList();
-    // }
+   
 }
+
+

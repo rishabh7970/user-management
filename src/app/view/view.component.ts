@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-view',
@@ -16,7 +17,7 @@ export class ViewComponent implements OnInit{
   isEditing: any = null;
   searchedText: string = '';
 
-  constructor(private fb: FormBuilder, private userService: UserService) {
+  constructor(private fb: FormBuilder, private userService: UserService, private router: Router) {
       this.userForm = this.fb.group({
           name: ['', Validators.required],
           last_name: ['', Validators.required],
@@ -55,6 +56,7 @@ export class ViewComponent implements OnInit{
   }
 
   editingUser(user: any) {
+    this.router.navigate(['/edit', user.id]);
       this.isEditing = user;
       this.userForm.setValue({
           name: user.name,
@@ -64,6 +66,7 @@ export class ViewComponent implements OnInit{
           company_name: user.company_name,
           role: user.role
       });
+      
   }
 
   updateUser() {
@@ -90,9 +93,9 @@ export class ViewComponent implements OnInit{
       this.updatecurrentUserList();
   }
 
-  // onPageChange(event: PageEvent) {
-  //     this.pageSize = event.pageSize;
-  //     this.pageIndex = event.pageIndex;
-  //     this.updatecurrentUserList();
-  // }
+//   onPageChange(event: PageEvent) {
+//       this.pageSize = event.pageSize;
+//       this.pageIndex = event.pageIndex;
+//       this.updatecurrentUserList();
+//   }
 }
