@@ -59,3 +59,11 @@
 .offcanvas .btn:last-child {
   margin-bottom: 0;
 }
+
+.example-container {
+  height: 100vh;
+}
+
+.mat-sidenav {
+  width: 250px;
+}
