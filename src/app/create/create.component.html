@@ -1,59 +1,102 @@
-<div class="container mt-5">
+<div class="container mt-3">
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card">
         <div class="card-body">
-          <h3 class="text-center fw-bold mb-4">User Form</h3>
+          <ng-container *ngIf="!showThankYou && !showErrorPage">
+            <h3 class="text-center fw-bold mb-4">User Form</h3>
 
-          <!-- Form starts here -->
-          <form [formGroup]="userForm" (ngSubmit)="isEditing ? updateUser() : addNewUser()">
+            <!-- Form starts here -->
+            <form [formGroup]="userForm" (ngSubmit)="submitForm()">
+              <div class="mb-3">
+                <label class="form-label">Registration ID *</label>
+                <input formControlName="id" type="text" class="form-control rounded-pill">
+                <div *ngIf="userForm.controls['id'].errors" class="text-danger">
+                  <div *ngIf="userForm.controls['id'].errors['nonUniqueId']">
+                    ID must be unique
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">First Name *</label>
+                <input formControlName="name" type="text" class="form-control rounded-pill">
+                <div *ngIf="userForm.controls['name'].errors" class="text-danger">
+                  <div *ngIf="userForm.controls['name'].errors['required']">
+                    First Name is required
+                  </div>
+                  <div *ngIf="userForm.controls['name'].errors['minlength']">
+                    First Name must be at least {{ userForm.controls['name'].errors['minlength'].requiredLength }} characters long
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Last Name</label>
+                <input formControlName="last_name" type="text" class="form-control rounded-pill">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Email Address *</label>
+                <input formControlName="email" type="text" class="form-control rounded-pill">
+                <div *ngIf="userForm.controls['email'].errors" class="text-danger">
+                  <div *ngIf="userForm.controls['email'].errors['email']">
+                    Please enter a valid email address
+                  </div>
+                  <div *ngIf="userForm.controls['email'].errors['required']">
+                    Email Address is required
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Country</label>
+                <input formControlName="country" type="text" class="form-control rounded-pill">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Organisation Name</label>
+                <input formControlName="company_name" type="text" class="form-control rounded-pill">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Designation</label>
+                <input formControlName="role" type="text" class="form-control rounded-pill">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Profile *</label>
+                <select formControlName="profile" class="form-control rounded-pill">
+                  <option *ngFor="let profile of profiles" [value]="profile">{{ profile }}</option>
+                </select>
+                <div *ngIf="userForm.controls['profile'].errors" class="text-danger">
+                  <div *ngIf="userForm.controls['profile'].errors['required']">
+                    Profile selection is required
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-primary me-3 rounded-pill">{{ isEditing ? 'Update' : 'Add' }} User</button>
+                <button type="reset" class="btn btn-secondary rounded-pill" (click)="userForm.reset()">Reset</button>
+              </div>
+            </form>
+            <!-- Form ends here -->
+          </ng-container>
 
-            <div class="mb-3">
-              <label class="form-label">First Name</label>
-              <input formControlName="name" type="text" class="form-control rounded-pill">
-              <div *ngIf="userForm.controls['name'].errors" class="text-danger">
-                <div *ngIf="userForm.pristine && userForm.controls['name'].errors['required']" >
-                  Field Required
-                </div>
-                <div *ngIf="userForm.dirty && userForm.controls['name'].errors" >
-                  Please enter a name of minimum 3 letters
-                </div>
-                </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Last Name</label>
-              <input formControlName="last_name" type="text" class="form-control rounded-pill">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Email Address</label>
-              <input formControlName="email" type="text" class="form-control rounded-pill">
-              <div *ngIf="userForm.controls['email'].errors" class="text-danger">
-                <div *ngIf="userForm.pristine && userForm.controls['email'].errors['required']" >
-                  Field Required
-                </div>
-                <div *ngIf="userForm.dirty && userForm.controls['email'].errors" >
-                Please enter a valid email Address
-              </div>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Country</label>
-              <input formControlName="country" type="text" class="form-control rounded-pill">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Organisation Name</label>
-              <input formControlName="company_name" type="text" class="form-control rounded-pill">
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Designation</label>
-              <input formControlName="role" type="text" class="form-control rounded-pill">
-            </div>
+          <!-- Thank You Template -->
+          <ng-container *ngIf="showThankYou">
+            <h3 class="text-center fw-bold mb-4">Thank You!</h3>
+            <p class="text-center">Your form has been successfully submitted.</p>
             <div class="d-flex justify-content-center">
-              <button type="submit" class="btn btn-primary me-3 rounded-pill">{{ isEditing ? 'Update' : 'Add' }} User</button>
-              <button type="reset" class="btn btn-secondary rounded-pill" (click)="userForm.reset()">Reset</button>
+              <button class="btn btn-primary me-3 rounded-pill" (click)="returnToForm()">Back to Form</button>
+              <button class="btn btn-success rounded-pill" (click)="goToViewPage()">Go to View Page</button>
             </div>
-          </form>
-          <!-- Form ends here -->
+          </ng-container>
+
+          <!-- Error Page Template -->
+          <ng-container *ngIf="showErrorPage">
+            <h3 class="text-center fw-bold mb-4">Error!</h3>
+            <p class="text-center">There are validation errors in the form:</p>
+            <ul class="text-danger">
+              <li *ngFor="let error of errorMessages">{{ error }}</li>
+            </ul>
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-primary rounded-pill" (click)="returnToForm()">Back to Form</button>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>

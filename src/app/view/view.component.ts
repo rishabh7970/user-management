@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { Router } from '@angular/router';
@@ -6,96 +6,118 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-view',
   templateUrl: './view.component.html',
-  styleUrl: './view.component.css'
+  styleUrls: ['./view.component.css']
 })
-export class ViewComponent implements OnInit{
-  pageSize: number = 10;
-  pageIndex: number = 0;
+export class ViewComponent implements OnInit, AfterViewInit {
+  @ViewChild('scrollAnchor', { static: false }) scrollAnchor!: ElementRef;
+
+  viewAll: boolean = false;
   currentUserList: any[] = [];
   totalUserList: any[] = [];
   userForm: FormGroup;
   isEditing: any = null;
   searchedText: string = '';
+  loading: boolean = false;
+  selectedProfile: string | null = null;
 
-  constructor(private fb: FormBuilder, private userService: UserService, private router: Router) {
-      this.userForm = this.fb.group({
-          name: ['', Validators.required],
-          last_name: ['', Validators.required],
-          email: ['', [Validators.required, Validators.email]],
-          country: ['', Validators.required],
-          company_name: ['', Validators.required],
-          role: ['', Validators.required]
-      });
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private router: Router
+  ) {
+    this.userForm = this.fb.group({
+      id: ['', Validators.required],
+      name: ['', Validators.required],
+      last_name: [''],
+      email: ['', [Validators.required, Validators.email]],
+      country: [''],
+      company_name: [''],
+      role: [''],
+      profile: ['', Validators.required]
+    });
   }
-  
 
   ngOnInit(): void {
-      this.displayUsers();
+    this.displayUsers();
+  }
+
+  ngAfterViewInit(): void {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !this.loading) {
+        this.loadMoreUsers();
+      }
+    }, {
+      root: null,
+      threshold: 0.1
+    });
+
+    observer.observe(this.scrollAnchor.nativeElement);
   }
 
   displayUsers() {
-      this.userService.getUserList().subscribe(users => {
-          this.totalUserList = users;
-          this.updatecurrentUserList();
+    this.userService.getUserList().subscribe(users => {
+      this.totalUserList = users;
+      this.updateCurrentUserList();
+    });
+  }
+
+  updateCurrentUserList() {
+    if (this.selectedProfile) {
+      this.currentUserList = this.totalUserList
+        .filter(user => user.profile === this.selectedProfile && (user?.name?.includes(this.searchedText) || user?.email?.includes(this.searchedText)))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    } else if (this.viewAll) {
+      this.currentUserList = this.totalUserList
+        .filter(user => user?.name?.includes(this.searchedText) || user?.email?.includes(this.searchedText))
+        .sort((a, b) => a.name.localeCompare(b.name));
+    }
+  }
+
+  loadMoreUsers() {
+    this.loading = true;
+    setTimeout(() => {
+      const nextUsers = this.totalUserList.slice(this.currentUserList.length, this.currentUserList.length + 10);
+      this.currentUserList = [...this.currentUserList, ...nextUsers].sort((a, b) => a.name.localeCompare(b.name));
+      this.loading = false;
+    }, 1000);
+  }
+
+  startEditing(user: any) {
+    this.isEditing = user;
+  }
+
+  updateUser(user: any) {
+    if (user) {
+      this.userService.updateUser(user.id, user).subscribe(updatedUser => {
+        const index = this.totalUserList.findIndex(u => u.id === updatedUser.id);
+        this.totalUserList[index] = updatedUser;
+        this.updateCurrentUserList();
+        this.isEditing = null;
       });
+    }
   }
 
-  updatecurrentUserList() {
-      this.currentUserList = this.totalUserList?.filter(user => user?.name?.includes(this.searchedText) || user?.email?.includes(this.searchedText))
-          .slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
-  }
-
-  addNewUser() {
-      if (this.userForm.valid) {
-          this.userService.addNewUser(this.userForm.value).subscribe(user => {
-              this.totalUserList.push(user);
-              this.userForm.reset();
-              this.updatecurrentUserList();
-          });
-      }
-  }
-
-  editingUser(user: any) {
-    this.router.navigate(['/edit', user.id]);
-      this.isEditing = user;
-      this.userForm.setValue({
-          name: user.name,
-          last_name: user.last_name,
-          email: user.email,
-          country: user.country,
-          company_name: user.company_name,
-          role: user.role
-      });
-      
-  }
-
-  updateUser() {
-      if (this.userForm.valid) {
-          this.userService.updateUser(this.isEditing.id, this.userForm.value).subscribe(updatedUser => {
-              const index = this.totalUserList.findIndex(user => user.id === this.isEditing.id);
-              this.totalUserList[index] = updatedUser;
-              this.isEditing = null;
-              this.userForm.reset();
-              this.updatecurrentUserList();
-          });
-      }
-  }
-
-  deleteUser(userId: number) {
-      this.userService.deleteUser(userId).subscribe(() => {
-          this.totalUserList = this.totalUserList.filter(user => user.id !== userId);
-          this.updatecurrentUserList();
-      });
+  deleteUser(userId: any) {
+    this.userService.deleteUser(userId).subscribe(() => {
+      this.totalUserList = this.totalUserList.filter(user => user.id !== userId);
+      this.updateCurrentUserList();
+    });
   }
 
   onSearch(event: any) {
-      this.searchedText = event.target.value;
-      this.updatecurrentUserList();
+    this.searchedText = event.target.value;
+    this.updateCurrentUserList();
   }
 
-//   onPageChange(event: PageEvent) {
-//       this.pageSize = event.pageSize;
-//       this.pageIndex = event.pageIndex;
-//       this.updatecurrentUserList();
-//   }
+  selectProfile(profile: string) {
+    this.selectedProfile = profile;
+    this.viewAll = false;
+    this.updateCurrentUserList();
+  }
+
+  viewAllUsers() {
+    this.selectedProfile = null;
+    this.viewAll = true;
+    this.updateCurrentUserList();
+  }
 }

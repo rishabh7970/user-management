@@ -1,78 +1,87 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
-import { HttpClient } from '@angular/common/http';
-
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
-  styleUrl: './create.component.css'
+  styleUrls: ['./create.component.css']
 })
-export class CreateComponent implements OnInit{
-  pageSize: number = 10;
-    pageIndex: number = 0;
-    currentUserList: any[] = [];
-    totalUserList: any[] = [];
-    userForm: FormGroup;
-    isEditing: any = null;
-    searchedText: string = '';
+export class CreateComponent implements OnInit {
+  userForm: FormGroup;
+  isEditing: boolean = false;
+  showThankYou: boolean = false;
+  showErrorPage: boolean = false;
+  errorMessages: string[] = [];
+  profiles: string[] = ['Profile1', 'Profile2'];
 
-    constructor(private fb: FormBuilder, private userService: UserService, private http: HttpClient) {
-        this.userForm = this.fb.group({
-            name: ['', [Validators.required, Validators.minLength(3)]],
-            last_name: [''],
-            email: ['', [Validators.required, Validators.email]],
-            country: [''],
-            company_name: [''],
-            role: ['']
-        });
-    }
-    
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private router: Router
+  ) {
+    this.userForm = this.fb.group({
+      id: ['', Validators.required],
+      name: ['', Validators.required],
+      last_name: [''],
+      email: ['', [Validators.required, Validators.email]],
+      country: [''],
+      company_name: [''],
+      role: [''],
+      profile: ['', Validators.required]
+    });
+  }
 
-    ngOnInit(): void {
-        this.displayUsers();
-    }
+  ngOnInit(): void {
+    // Initialization logic if needed
+  }
 
-    displayUsers() {
-        this.userService.getUserList().subscribe(users => {
-            this.totalUserList = users;
-            this.updatecurrentUserList();
-        });
-    }
-
-    updatecurrentUserList() {
-        this.currentUserList = this.totalUserList?.filter(user => user?.name?.includes(this.searchedText) || user?.email?.includes(this.searchedText))
-            .slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
-    }
-
-    addNewUser() {
-        if (this.userForm.valid) {
-            this.userService.addNewUser(this.userForm.value).subscribe(user => {
-                this.totalUserList.push(user);
-                this.userForm.reset();
-                this.updatecurrentUserList();
-                
-            });
+  submitForm() {
+    if (this.userForm.valid) {
+      const formValue = this.userForm.value;
+      this.userService.getUserList().subscribe(users => {
+        const isIdUnique = !users.some(user => user.id === formValue.id);
+        if (isIdUnique) {
+          this.userService.addNewUser(formValue).subscribe(() => {
+            this.showThankYou = true;
+            this.showErrorPage = false;
+          });
+        } else {
+          this.userForm.controls['id'].setErrors({ nonUniqueId: true });
         }
+      });
+    } else {
+      this.showErrorPage = true;
+      this.errorMessages = this.getFormValidationErrors();
     }
+  }
 
-    
+  handleError(error: any) {
+    this.showErrorPage = true;
+    this.errorMessages = [error.message || 'An error occurred while submitting the form.'];
+  }
 
-    updateUser() {
-        if (this.userForm.valid) {
-            this.userService.updateUser(this.isEditing.id, this.userForm.value).subscribe(updatedUser => {
-                const index = this.totalUserList.findIndex(user => user.id === this.isEditing.id);
-                this.totalUserList[index] = updatedUser;
-                this.isEditing = null;
-                this.userForm.reset();
-                this.updatecurrentUserList();
-            });
-        }
-    }
+  getFormValidationErrors() {
+    const errors: string[] = [];
+    Object.keys(this.userForm.controls).forEach(key => {
+      const controlErrors = this.userForm.get(key)?.errors;
+      if (controlErrors) {
+        Object.keys(controlErrors).forEach(errorKey => {
+          errors.push(`${key} is invalid: ${errorKey}`);
+        });
+      }
+    });
+    return errors;
+  }
 
-   
+  returnToForm() {
+    this.showThankYou = false;
+    this.showErrorPage = false;
+    this.userForm.reset();
+  }
+
+  goToViewPage() {
+    this.router.navigate(['/view']); // Adjust the route as needed
+  }
 }
-
-

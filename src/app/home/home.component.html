@@ -1,31 +1,49 @@
-<header class="hero-section text-center">
+<div *ngIf="!showProfilesFlag">
+  <header class="hero-section text-center mb-5">
     <div class="container">
-        <h1 class="display-4">Welcome to User Management System</h1>
-        <p class="lead">Manage your users efficiently and effortlessly.</p>
+      <h1 class="display-4">Welcome to User Management System</h1>
+      <p class="lead">Manage your users efficiently and effortlessly.</p>
     </div>
-</header>
+  </header>
 
-<section id="features" class="py-5">
+  <section id="features" class="py-5">
     <div class="container">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">Create Users</h5>
-                        <p class="card-text">Easily add new users to your system with our user-friendly form.</p>
-                        <a href="/create" class="btn btn-outline-primary">Get Started</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title">View Users</h5>
-                        <p class="card-text">View and manage all your users in one place.</p>
-                        <a href="/view" class="btn btn-outline-primary">View Users</a>
-                    </div>
-                </div>
-            </div>
+      <div class="card shadow-sm">
+        <div class="card-body text-center">
+          <h5 class="card-title">View Profiles</h5>
+          <p class="card-text">Add new users, view existing users, and manage profiles.</p>
+          <button class="btn btn-outline-primary" (click)="showProfiles()">Go to Profiles</button>
         </div>
+      </div>
     </div>
-</section>
+  </section>
+</div>
+
+<div *ngIf="showProfilesFlag">
+  <div class="container text-center">
+    <h3 class="mb-4">Select Profile</h3>
+    <div class="row justify-content-center">
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">Profile1</h5>
+            <button class="btn btn-outline-primary mb-2" routerLink="/view">View Users</button>
+            <button class="btn btn-outline-primary mb-2" routerLink="/create">Create Users</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body text-center">
+            <h5 class="card-title mb-3">Profile2</h5>
+            <button class="btn btn-outline-primary mb-2" routerLink="/view">View Users</button>
+            <button class="btn btn-outline-primary mb-2" routerLink="/create">Create Users</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <button class="btn btn-outline-secondary" (click)="goBackToHome()">Go Back</button>
+    </div>
+  </div>
+</div>

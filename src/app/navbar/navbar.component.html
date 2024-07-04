@@ -1,23 +1,36 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-  <div class="container-fluid">
-    
-    <img src="https://cdn2.vectorstock.com/i/1000x1000/66/96/user-management-sign-icon-or-logo-account-vector-35356696.jpg"
-     style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <button class="btn nav-link shadow me-2 click-effect" routerLink="/">Home</button>
-        </li>
-        <li class="nav-item">
-          <button class="btn nav-link shadow me-2 click-effect" routerLink="/create">Create</button>
-        </li>
-        <li class="nav-item">
-          <button class="btn nav-link shadow click-effect" routerLink="/view">View</button>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
+<mat-sidenav-container class="example-container" style="height: 100vh;">
+  <mat-sidenav #sidenav mode="side" [opened]="false">
+    <!-- Empty Sidenav Content -->
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+      <div class="container-fluid">
+        <!-- Sidebar toggle button -->
+        <button class="btn btn-outline-secondary me-2" type="button" (click)="sidenav.toggle()">
+          <img src="https://cdn2.vectorstock.com/i/1000x1000/66/96/user-management-sign-icon-or-logo-account-vector-35356696.jpg"
+            style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+        </button>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <button class="btn nav-link shadow me-2 click-effect" routerLink="/">Home</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn nav-link shadow me-2 click-effect" routerLink="/create">Create</button>
+            </li>
+            <li class="nav-item">
+              <button class="btn nav-link shadow click-effect" routerLink="/view">View</button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main content goes here -->
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
