@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../user.service';
-import { Router } from '@angular/router';
+import { ProfileService } from '../AppServices/profile.service';
 
 @Component({
   selector: 'app-create',
@@ -14,12 +15,15 @@ export class CreateComponent implements OnInit {
   showThankYou: boolean = false;
   showErrorPage: boolean = false;
   errorMessages: string[] = [];
-  profiles: string[] = ['Profile1', 'Profile2'];
+  profiles: string[] = [];
+  defaultProfile: string = '';
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private profileService: ProfileService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.userForm = this.fb.group({
       id: ['', Validators.required],
@@ -34,32 +38,41 @@ export class CreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Initialization logic if needed
+    this.loadProfiles();
+    this.route.queryParams.subscribe(params => {
+      this.defaultProfile = params['profile'] || '';
+      if (this.defaultProfile) {
+        this.userForm.patchValue({ profile: this.defaultProfile });
+      }
+    });
+  }
+
+  loadProfiles() {
+    this.profileService.getProfiles().subscribe(profiles => {
+      this.profiles = profiles.map(profile => profile.name);
+    });
   }
 
   submitForm() {
     if (this.userForm.valid) {
       const formValue = this.userForm.value;
-      this.userService.getUserList().subscribe(users => {
-        const isIdUnique = !users.some(user => user.id === formValue.id);
-        if (isIdUnique) {
-          this.userService.addNewUser(formValue).subscribe(() => {
+      this.userService.addNewUser(formValue).subscribe(() => {
+        this.profileService.getProfiles().subscribe(profiles => {
+          if (!profiles.some(profile => profile.name === formValue.profile)) {
+            this.profileService.addProfile(formValue.profile).subscribe(() => {
+              this.showThankYou = true;
+              this.showErrorPage = false;
+            });
+          } else {
             this.showThankYou = true;
             this.showErrorPage = false;
-          });
-        } else {
-          this.userForm.controls['id'].setErrors({ nonUniqueId: true });
-        }
+          }
+        });
       });
     } else {
       this.showErrorPage = true;
       this.errorMessages = this.getFormValidationErrors();
     }
-  }
-
-  handleError(error: any) {
-    this.showErrorPage = true;
-    this.errorMessages = [error.message || 'An error occurred while submitting the form.'];
   }
 
   getFormValidationErrors() {
@@ -79,9 +92,15 @@ export class CreateComponent implements OnInit {
     this.showThankYou = false;
     this.showErrorPage = false;
     this.userForm.reset();
+    this.route.queryParams.subscribe(params => {
+      this.defaultProfile = params['profile'] || '';
+      if (this.defaultProfile) {
+        this.userForm.patchValue({ profile: this.defaultProfile });
+      }
+    });
   }
 
   goToViewPage() {
-    this.router.navigate(['/view']); // Adjust the route as needed
+    this.router.navigate(['/view']);
   }
 }

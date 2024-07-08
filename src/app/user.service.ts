@@ -3,30 +3,39 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class UserService {
-    private apiUrl = 'http://localhost:3000/users';
+  private apiUrl = 'http://localhost:3000/users';
+  private profilesUrl = 'http://localhost:3000/profiles'; // Assuming you have a profiles endpoint
 
-    constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { }
 
-    getUserList(): Observable<any[]> {
-        return this.http.get<any[]>(this.apiUrl);
-    }
+  getUserList(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
+  }
 
-    addNewUser(user: any): Observable<any> {
-        return this.http.post<any>(this.apiUrl, user);
-    }
+  addNewUser(user: any): Observable<any> {
+    return this.http.post<any>(this.apiUrl, user);
+  }
 
-    updateUser(userId: number, user: any): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/${userId}`, user);
-    }
+  updateUser(userId: number, user: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${userId}`, user);
+  }
 
-    deleteUser(userId: number): Observable<any> {
-        return this.http.delete<any>(`${this.apiUrl}/${userId}`);
-    }
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${userId}`);
+  }
 
-    getUserById(id: number): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}`);
-      }
+  getUserById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  getProfiles(): Observable<any[]> {
+    return this.http.get<any[]>(this.profilesUrl);
+  }
+
+  addProfile(profile: any): Observable<any> {
+    return this.http.post<any>(this.profilesUrl, profile);
+  }
 }

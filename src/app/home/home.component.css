@@ -41,6 +41,7 @@
     color: #007bff;
     border-color: #007bff;
     border-radius: 25px;
+    margin-right: 2cap;
 }
 
 .btn-outline-primary:hover {
@@ -54,6 +55,11 @@
 }
 
 .btn-outline-secondary {
+    
+    border-radius: 25px;
+}
+
+.btn-outline-danger {
     
     border-radius: 25px;
 }

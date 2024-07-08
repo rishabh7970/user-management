@@ -1,4 +1,5 @@
-<div *ngIf="!showProfilesFlag">
+<!-- Content shown when not creating a new profile and profiles are not being shown -->
+<div *ngIf="!showProfilesFlag && !isCreatingProfile">
   <header class="hero-section text-center mb-5">
     <div class="container">
       <h1 class="display-4">Welcome to User Management System</h1>
@@ -8,36 +9,58 @@
 
   <section id="features" class="py-5">
     <div class="container">
-      <div class="card shadow-sm">
-        <div class="card-body text-center">
-          <h5 class="card-title">View Profiles</h5>
-          <p class="card-text">Add new users, view existing users, and manage profiles.</p>
-          <button class="btn btn-outline-primary" (click)="showProfiles()">Go to Profiles</button>
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">View Profiles</h5>
+              <p class="card-text">Add new users, view existing users, and manage profiles.</p>
+              <button class="btn btn-outline-primary" (click)="showProfiles()">Go to Profiles</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6 mb-4">
+          <div class="card shadow-sm">
+            <div class="card-body text-center">
+              <h5 class="card-title">Create New Profile</h5>
+              <p class="card-text">Create a new user profile to manage.</p>
+              <button class="btn btn-outline-primary" (click)="startCreatingProfile()">Create Profile</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 </div>
 
-<div *ngIf="showProfilesFlag">
+<!-- Full-page form for creating a new profile -->
+<div *ngIf="isCreatingProfile" class="container text-center">
+  <h3 class="mb-4">Create New Profile</h3>
+  <form (ngSubmit)="createProfile()" [formGroup]="profileForm">
+    <div class="mb-3">
+      <label for="profileName" class="form-label">Profile Name</label>
+      <input type="text" id="profileName" class="form-control" formControlName="profileName" required>
+      <div *ngIf="profileForm.controls['profileName'].invalid && profileForm.controls['profileName'].touched" class="text-danger">
+        Profile name is required.
+      </div>
+    </div>
+    <button type="submit" class="btn btn-outline-primary">Create Profile</button>
+    <button type="button" class="btn btn-outline-secondary" (click)="cancelCreatingProfile()">Cancel</button>
+  </form>
+</div>
+
+<!-- Profile selection content -->
+<div *ngIf="showProfilesFlag && !isCreatingProfile">
   <div class="container text-center">
     <h3 class="mb-4">Select Profile</h3>
     <div class="row justify-content-center">
-      <div class="col-md-6 mb-4">
+      <div *ngFor="let profile of profiles" class="col-md-6 mb-4">
         <div class="card shadow-sm">
           <div class="card-body text-center">
-            <h5 class="card-title mb-3">Profile1</h5>
-            <button class="btn btn-outline-primary mb-2" routerLink="/view">View Users</button>
-            <button class="btn btn-outline-primary mb-2" routerLink="/create">Create Users</button>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-6 mb-4">
-        <div class="card shadow-sm">
-          <div class="card-body text-center">
-            <h5 class="card-title mb-3">Profile2</h5>
-            <button class="btn btn-outline-primary mb-2" routerLink="/view">View Users</button>
-            <button class="btn btn-outline-primary mb-2" routerLink="/create">Create Users</button>
+            <h5 class="card-title mb-3">{{ profile.name }}</h5>
+            <button class="btn btn-outline-primary mb-2" (click)="viewProfile(profile.name)">View Users</button>
+            <button class="btn btn-outline-primary mb-2" (click)="createUser(profile.name)">Create Users</button>
+            <button class="btn btn-outline-danger mb-2" (click)="deleteProfile(profile.name)">Delete Profile</button>
           </div>
         </div>
       </div>

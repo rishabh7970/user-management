@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ProfileService } from '../AppServices/profile.service';
 
 @Component({
   selector: 'app-view',
@@ -11,7 +12,6 @@ import { Router } from '@angular/router';
 export class ViewComponent implements OnInit, AfterViewInit {
   @ViewChild('scrollAnchor', { static: false }) scrollAnchor!: ElementRef;
 
-  viewAll: boolean = false;
   currentUserList: any[] = [];
   totalUserList: any[] = [];
   userForm: FormGroup;
@@ -19,11 +19,16 @@ export class ViewComponent implements OnInit, AfterViewInit {
   searchedText: string = '';
   loading: boolean = false;
   selectedProfile: string | null = null;
+  dropdownVisible: boolean = false;
+  profiles: string[] = [];
+  sortOrder: 'asc' | 'desc' = 'asc'; // Default sort order
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private profileService: ProfileService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.userForm = this.fb.group({
       id: ['', Validators.required],
@@ -38,7 +43,13 @@ export class ViewComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.displayUsers();
+    this.loadProfiles();
+    this.route.queryParams.subscribe(params => {
+      if (params['profile']) {
+        this.selectedProfile = params['profile'];
+      }
+      this.displayUsers();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -56,24 +67,36 @@ export class ViewComponent implements OnInit, AfterViewInit {
 
   displayUsers() {
     this.userService.getUserList().subscribe(users => {
-      this.totalUserList = users;
+      if (this.selectedProfile) {
+        this.totalUserList = users.filter(user => user.profile === this.selectedProfile);
+      } else {
+        this.totalUserList = users;
+      }
       this.updateCurrentUserList();
     });
   }
 
+  loadProfiles() {
+    this.profileService.getProfiles().subscribe(profiles => {
+      this.profiles = profiles.map(profile => profile.name);
+    });
+  }
+
   updateCurrentUserList() {
-    if (this.selectedProfile) {
-      this.currentUserList = this.totalUserList
-        .filter(user => user.profile === this.selectedProfile && (user?.name?.includes(this.searchedText) || user?.email?.includes(this.searchedText)))
-        .sort((a, b) => a.name.localeCompare(b.name));
-    } else if (this.viewAll) {
-      this.currentUserList = this.totalUserList
-        .filter(user => user?.name?.includes(this.searchedText) || user?.email?.includes(this.searchedText))
-        .sort((a, b) => a.name.localeCompare(b.name));
-    }
+    let filteredUsers = this.totalUserList.filter(user =>
+      (user.name?.includes(this.searchedText) || user.email?.includes(this.searchedText))
+    );
+
+    // Sort the filtered list based on the selected sort order
+    this.currentUserList = filteredUsers.sort((a, b) => {
+      const comparison = a.name.localeCompare(b.name);
+      return this.sortOrder === 'asc' ? comparison : -comparison;
+    });
   }
 
   loadMoreUsers() {
+    if (this.loading) return;
+
     this.loading = true;
     setTimeout(() => {
       const nextUsers = this.totalUserList.slice(this.currentUserList.length, this.currentUserList.length + 10);
@@ -111,13 +134,20 @@ export class ViewComponent implements OnInit, AfterViewInit {
 
   selectProfile(profile: string) {
     this.selectedProfile = profile;
-    this.viewAll = false;
-    this.updateCurrentUserList();
+    this.dropdownVisible = false;
+    this.displayUsers();
   }
 
-  viewAllUsers() {
-    this.selectedProfile = null;
-    this.viewAll = true;
+  toggleDropdown() {
+    this.dropdownVisible = !this.dropdownVisible;
+  }
+
+  getDropdownClass(profile: string): string {
+    return this.selectedProfile === profile ? 'dropdown-item active' : 'dropdown-item';
+  }
+
+  toggleSortOrder() {
+    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     this.updateCurrentUserList();
   }
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ProfileService } from '../AppServices/profile.service';
 
 @Component({
   selector: 'app-home',
@@ -16,16 +17,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
   Users1: any[] = [];
   Users2: any[] = [];
   userForm: FormGroup;
+  profileForm: FormGroup;
   isEditing: any = null;
   searchedText: string = '';
   loading: boolean = false;
   showProfilesFlag: boolean = false;
   currentProfile: string = '';
+  profiles: any[] = [];
+  isCreatingProfile: boolean = false;
 
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private router: Router
+    private profileService: ProfileService,
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.userForm = this.fb.group({
       name: ['', Validators.required],
@@ -35,10 +41,35 @@ export class HomeComponent implements OnInit, AfterViewInit {
       company_name: ['', Validators.required],
       role: ['', Validators.required]
     });
+
+    this.profileForm = this.fb.group({
+      profileName: ['', Validators.required]
+    });
   }
 
   ngOnInit(): void {
-    this.displayUsers();
+    this.route.queryParams.subscribe(params => {
+      if (params['viewProfiles']) {
+        this.showProfilesFlag = true;
+        this.isCreatingProfile = false;
+      } else if (params['createNewProfile']) {
+        this.isCreatingProfile = true;
+        this.showProfilesFlag = false;
+      } else if (params['profile']) {
+        this.currentProfile = params['profile'];
+        this.showProfilesFlag = false;
+        this.isCreatingProfile = false;
+        this.updateCurrentUserList();
+      } else {
+        this.showProfilesFlag = false;
+        this.isCreatingProfile = false;
+      }
+    });
+
+    this.profileService.getProfiles().subscribe(profiles => {
+      this.profiles = profiles;
+      this.displayUsers();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -54,7 +85,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     observer.observe(this.scrollAnchor.nativeElement);
   }
 
-
   displayUsers() {
     this.userService.getUserList().subscribe(users => {
       this.totalUserList = users;
@@ -69,6 +99,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.currentUserList = this.Users1;
     } else if (this.currentProfile === 'Profile2') {
       this.currentUserList = this.Users2;
+    } else {
+      this.currentUserList = [];
     }
   }
 
@@ -88,8 +120,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
   goBackToHome() {
     this.showProfilesFlag = false;
     this.currentProfile = '';
-    // Optional: Navigate to the home route, if needed
-    // this.router.navigate(['/home']);
+    this.isCreatingProfile = false;
+    this.router.navigate(['/']);
   }
 
   updateUser(user: any) {
@@ -100,7 +132,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         this.Users1 = this.totalUserList.filter(user => user.profile === 'Profile1');
         this.Users2 = this.totalUserList.filter(user => user.profile === 'Profile2');
         this.updateCurrentUserList();
-        this.isEditing = null; 
+        this.isEditing = null;
       });
     }
   }
@@ -114,22 +146,65 @@ export class HomeComponent implements OnInit, AfterViewInit {
     });
   }
 
+  deleteProfile(profileName: string) {
+    if (confirm(`Are you sure you want to delete the profile "${profileName}"?`)) {
+      this.profileService.deleteProfile(profileName).subscribe(() => {
+        this.profiles = this.profiles.filter(profile => profile.name !== profileName);
+        this.userService.getUserList().subscribe(users => {
+          this.totalUserList = users.filter(user => user.profile !== profileName);
+          this.Users1 = this.totalUserList.filter(user => user.profile === 'Profile1');
+          this.Users2 = this.totalUserList.filter(user => user.profile === 'Profile2');
+          this.updateCurrentUserList();
+        });
+      });
+    }
+  }
+
   onSearch(event: any) {
     this.searchedText = event.target.value;
     this.updateCurrentUserList();
   }
 
   showProfiles() {
-    this.showProfilesFlag = true;
+    this.router.navigate(['/'], { queryParams: { viewProfiles: true } });
   }
 
   showHome() {
-    this.showProfilesFlag = false;
+    this.router.navigate(['/']);
   }
 
   showProfileUsers(profile: string) {
     this.currentProfile = profile;
-    this.showProfilesFlag = false;
-    this.updateCurrentUserList();
+    this.router.navigate(['/view'], { queryParams: { profile: profile } });
+  }
+
+  startCreatingProfile() {
+    this.router.navigate(['/'], { queryParams: { createNewProfile: true } });
+  }
+
+  cancelCreatingProfile() {
+    this.router.navigate(['/'], { queryParams: { viewProfiles: true } });
+  }
+
+  createProfile() {
+    if (this.profileForm.valid) {
+      const profileName = this.profileForm.value.profileName;
+      if (profileName && !this.profiles.some(profile => profile.name === profileName)) {
+        this.profileService.addProfile(profileName).subscribe(() => {
+          this.profileService.getProfiles().subscribe(profiles => {
+            this.profiles = profiles;
+            this.router.navigate(['/'], { queryParams: { viewProfiles: true } });
+          });
+        });
+      }
+    }
+  }
+
+  viewProfile(profileName: string) {
+    this.router.navigate(['/view'], { queryParams: { profile: profileName } });
+  }
+
+  createUser(profileName: string) {
+    this.router.navigate(['/create'], { queryParams: { profile: profileName } });
   }
 }

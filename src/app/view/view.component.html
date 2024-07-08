@@ -1,26 +1,37 @@
 <div class="container">
   <div class="row text-center">
     <h2 class="fw-bold">List Of Users</h2>
-    <div class="btn-group mb-3">
-      <button class="btn btn-primary" (click)="selectProfile('Profile1')">Profile1</button>
-      <button class="btn btn-secondary" (click)="selectProfile('Profile2')">Profile2</button>
-      <button class="btn btn-success" (click)="viewAllUsers()">View All Users</button>
+    <div class="d-flex justify-content-center mb-3">
+      <form class="d-flex">
+        <input class="form-control custom-search-bar" type="search" placeholder="Search For User" (input)="onSearch($event)" aria-label="Search">
+        <button class="btn btn-outline-success ms-2" type="submit">Search</button>
+      </form>
     </div>
-    <form class="d-flex justify-content-center">
-      <input class="form-control custom-search-bar" type="search" placeholder="Search For User" (input)="onSearch($event)" aria-label="Search">
-      <button class="btn btn-outline-success" type="submit">Search</button>
-    </form>
+    <div class="btn-group mb-3">
+      <button class="btn btn-success dropdown-toggle" (click)="toggleDropdown()">
+        {{ selectedProfile ? selectedProfile : 'View All Users' }}
+      </button>
+      <ul *ngIf="dropdownVisible" class="dropdown-menu">
+        <li *ngFor="let profile of profiles" (click)="selectProfile(profile)" [ngClass]="getDropdownClass(profile)">
+          {{ profile }}
+        </li>
+      </ul>
+    </div>
   </div>
   <br>
-
-  <div *ngIf="selectedProfile || viewAll" class="table-wrapper">
+  <div class="table-wrapper">
     <div class="table-container">
       <table class="table">
         <thead>
           <tr>
             <th scope="col">#</th>
             <th scope="col">ID</th>
-            <th scope="col">First Name</th>
+            <th scope="col">
+              First Name
+              <span class="sort-icon" (click)="toggleSortOrder()">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
             <th scope="col">Last Name</th>
             <th scope="col">Email</th>
             <th scope="col">Country</th>

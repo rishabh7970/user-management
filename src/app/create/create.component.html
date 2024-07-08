@@ -6,7 +6,6 @@
           <ng-container *ngIf="!showThankYou && !showErrorPage">
             <h3 class="text-center fw-bold mb-4">User Form</h3>
 
-            <!-- Form starts here -->
             <form [formGroup]="userForm" (ngSubmit)="submitForm()">
               <div class="mb-3">
                 <label class="form-label">Registration ID *</label>
@@ -73,10 +72,8 @@
                 <button type="reset" class="btn btn-secondary rounded-pill" (click)="userForm.reset()">Reset</button>
               </div>
             </form>
-            <!-- Form ends here -->
           </ng-container>
 
-          <!-- Thank You Template -->
           <ng-container *ngIf="showThankYou">
             <h3 class="text-center fw-bold mb-4">Thank You!</h3>
             <p class="text-center">Your form has been successfully submitted.</p>
@@ -86,7 +83,6 @@
             </div>
           </ng-container>
 
-          <!-- Error Page Template -->
           <ng-container *ngIf="showErrorPage">
             <h3 class="text-center fw-bold mb-4">Error!</h3>
             <p class="text-center">There are validation errors in the form:</p>
