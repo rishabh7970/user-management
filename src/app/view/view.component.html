@@ -1,0 +1,126 @@
+<div class="container">
+  <div class="row text-center">
+    <h2 class="fw-bold">List Of Users</h2>
+    <div class="d-flex justify-content-center mb-3">
+      <form class="d-flex">
+        <input class="form-control custom-search-bar" type="search" placeholder="Search For User" (input)="onSearch($event)" aria-label="Search">
+        <button class="btn btn-outline-success ms-2" type="submit">Search</button>
+      </form>
+    </div>
+    <div class="btn-group mb-3">
+      <button class="btn btn-success dropdown-toggle" (click)="toggleDropdown()">
+        {{ selectedProfile ? selectedProfile : 'View All Users' }}
+      </button>
+      <ul *ngIf="dropdownVisible" class="dropdown-menu">
+        <li *ngFor="let profile of profiles" (click)="selectProfile(profile)" [ngClass]="getDropdownClass(profile)">
+          {{ profile }}
+        </li>
+      </ul>
+    </div>
+  </div>
+  <br>
+  <div class="table-wrapper">
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">ID</th>
+            <th scope="col">
+              First Name
+              <span class="sort-icon" (click)="toggleSortOrder()">
+                {{ sortOrder === 'asc' ? '▲' : '▼' }}
+              </span>
+            </th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Country</th>
+            <th scope="col">Organisation Name</th>
+            <th scope="col">Designation</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of currentUserList; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ user.id }}</td>
+            <td>
+              <ng-container *ngIf="isEditing === user; else displayName">
+                <input [(ngModel)]="user.name" (blur)="updateUser(user)" class="form-control input-edit" />
+              </ng-container>
+              <ng-template #displayName>
+                <span class="tooltip-wrapper">
+                  <span class="truncate" [title]="user.name">{{ user.name }}</span>
+                  <span class="tooltip-text">{{ user.name }}</span>
+                </span>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="isEditing === user; else displayLastName">
+                <input [(ngModel)]="user.last_name" (blur)="updateUser(user)" class="form-control input-edit" />
+              </ng-container>
+              <ng-template #displayLastName>
+                <span class="tooltip-wrapper">
+                  <span class="truncate" [title]="user.last_name">{{ user.last_name }}</span>
+                  <span class="tooltip-text">{{ user.last_name }}</span>
+                </span>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="isEditing === user; else displayEmail">
+                <input [(ngModel)]="user.email" (blur)="updateUser(user)" class="form-control input-edit" />
+              </ng-container>
+              <ng-template #displayEmail>
+                <span class="tooltip-wrapper">
+                  <span class="truncate" [title]="user.email">{{ user.email }}</span>
+                  <span class="tooltip-text">{{ user.email }}</span>
+                </span>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="isEditing === user; else displayCountry">
+                <input [(ngModel)]="user.country" (blur)="updateUser(user)" class="form-control input-edit" />
+              </ng-container>
+              <ng-template #displayCountry>
+                <span class="tooltip-wrapper">
+                  <span class="truncate" [title]="user.country">{{ user.country }}</span>
+                  <span class="tooltip-text">{{ user.country }}</span>
+                </span>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="isEditing === user; else displayCompany">
+                <input [(ngModel)]="user.company_name" (blur)="updateUser(user)" class="form-control input-edit" />
+              </ng-container>
+              <ng-template #displayCompany>
+                <span class="tooltip-wrapper">
+                  <span class="truncate" [title]="user.company_name">{{ user.company_name }}</span>
+                  <span class="tooltip-text">{{ user.company_name }}</span>
+                </span>
+              </ng-template>
+            </td>
+            <td>
+              <ng-container *ngIf="isEditing === user; else displayRole">
+                <input [(ngModel)]="user.role" (blur)="updateUser(user)" class="form-control input-edit" />
+              </ng-container>
+              <ng-template #displayRole>
+                <span class="tooltip-wrapper">
+                  <span class="truncate" [title]="user.role">{{ user.role }}</span>
+                  <span class="tooltip-text">{{ user.role }}</span>
+                </span>
+              </ng-template>
+            </td>
+            <td>
+              <button class="btn btn-primary" (click)="startEditing(user)">Edit</button>
+            </td>
+            <td>
+              <button class="btn btn-danger" (click)="deleteUser(user.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div #scrollAnchor></div>
+  </div>
+</div>

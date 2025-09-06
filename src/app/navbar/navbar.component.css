@@ -1,0 +1,69 @@
+
+.navbar {
+  background: #f8f9fa; 
+  padding: 10px 20px;
+  border-bottom: 1px solid #dee2e6; 
+}
+
+.navbar-logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.navbar-toggler {
+  border: none;
+  background-color: transparent;
+}
+
+.nav-link {
+  color: #495057; 
+  font-weight: 500;
+  font-size: 0.875rem; 
+  padding: 8px 12px;
+  border-radius: 50px;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+  text-transform: uppercase;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: #212529;
+  transform: scale(1.05);
+}
+
+
+.click-effect {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.click-effect:active {
+  transform: scale(0.98); 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.offcanvas-header {
+  border-bottom: 1px solid #e9ecef;
+}
+
+.offcanvas-body {
+  padding: 1rem;
+}
+
+.offcanvas .btn {
+  margin-bottom: 1rem;
+}
+
+.offcanvas .btn:last-child {
+  margin-bottom: 0;
+}
+
+.example-container {
+  height: 100vh;
+}
+
+.mat-sidenav {
+  width: 250px;
+}

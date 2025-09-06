@@ -1,0 +1,65 @@
+.hero-section {
+    background: linear-gradient(to right, #ff7e5f, #feb47b);
+    color: white;
+    padding: 80px 0;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: 700;
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+    font-weight: 300;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-body {
+    background: #f9f9f9;
+    border-radius: 15px;
+    padding: 2rem;
+}
+
+.card-title {
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.card-text {
+    color: #555;
+    font-size: 1rem;
+}
+
+.btn-outline-primary {
+    color: #007bff;
+    border-color: #007bff;
+    border-radius: 25px;
+    margin-right: 2cap;
+}
+
+.btn-outline-primary:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.btn-outline-secondary {
+    
+    border-radius: 25px;
+}
+
+.btn-outline-danger {
+    
+    border-radius: 25px;
+}
